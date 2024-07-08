@@ -70,7 +70,32 @@ k3 cluster dev setup
  kubectl create namespace dev 
  kubectl config set-context --current --namespace=dev
 ```
+To inject environment variables into the containers, you’ll have to create a ConfigMap object in Kubernetes. To do that, open the 
+configmap.yaml file.
 
+The ConfigMap should have database-configmap as the name. It should contain the following specifications:
+
+data.POSTGRES_SVC: "database-svc"
+data.POSTGRES_PORT: "5432"
+data.POSTGRES_DB: "elearning3_development"
+data.POSTGRES_USER: "postgres"
+data.POSTGRES_PASSWORD: "postgrespassword"
+
+```
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: database-configmap
+data:
+  POSTGRES_SVC: "database-svc"
+  POSTGRES_PORT: "5432"
+  POSTGRES_DB: "elearning3_development"
+  POSTGRES_USER: "postgres"
+  POSTGRES_PASSWORD: "postgrespassword"
+```
+
+kubectl apply -f configmap.yaml
+kubectl get configmap
 
 Deploy Backend , this case postgres db
 
@@ -98,9 +123,9 @@ spec:
         ports:
           - containerPort: 5432
         imagePullPolicy: Always
-        # env: # intentionally commented
-        # - name: POSTGRES_PASSWORD
-        #   value: "password"
+        envFrom:
+          - configMapRef:
+                name: database-configmap
 ```
 
 kubectl apply -f database.yaml
@@ -157,11 +182,44 @@ spec:
         project: kubernetes-project
         app: application
         tier: frontend
-    spec:
+    spec: 
       containers:
       - name: app-pod
         image: madhushesharam/e_learning_repo:v1
         imagePullPolicy: Always
         ports:
         - containerPort: 3000
+        envFrom:
+          - configMapRef:
+                name: database-configmap
 ```
+
+
+To deploy the application as a service, you have to create another Kubernetes service object. To do that, open the  app-svc.yaml file.
+
+kubectl apply -f app-svc.yaml
+service/app-svc created
+
+kubectl get service
+NAME           TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)          AGE
+database-svc   ClusterIP   10.43.185.116   <none>        5432/TCP         5h56m
+app-svc        NodePort    10.43.191.67    <none>        3000:31111/TCP   39s
+
+
+# to access app on mac 
+
+kubectl expose svc app-svc  --target-port 3000  --name webtest --type=LoadBalancer
+service/webtest exposed
+
+kubectl get  service/webtest  -o yaml  | yq .status.loadBalancer.ingress
+[
+  {
+    "ip": "192.168.105.2"
+  }
+]
+
+browser 192.168.105.2:3000 
+
+
+
+
