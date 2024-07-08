@@ -214,11 +214,11 @@ service/webtest exposed
 kubectl get  service/webtest  -o yaml  | yq .status.loadBalancer.ingress
 [
   {
-    "ip": "192.168.105.2"
+    "ip": "XX.XXX.XXX.X"
   }
 ]
 
-browser 192.168.105.2:3000 
+browser localhost:3000 
 
 
 
