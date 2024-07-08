@@ -1,12 +1,27 @@
 # hello-world-kubernetes
 
-
 Deploy a Full Stack Web Application over Kubernetes
 
 In this project, we'll deploy a web application over a Kubernetes cluster, with separate backend and frontend components. 
 We'll also use ConfigMaps to share common information among the services via environment variables in our containers.
 
+### Prerequisites
 
+Basic knowledge of Containers/Docker and Docker images
+
+Basic knowledge of Docker Hub/ Container Registries
+
+Good understanding of Kubernetes services and  microservice architecture
+
+### Project Description
+
+In this project, we'll use Docker and Kubernetes command-line tools to deploy  application on a Kubernetes cluster, along with a PostgreSQL database.
+
+Kubernetes is an open-source platform that helps us deploy and manage containerized applications. 
+It handles everything from deployment to exposure, automatically restarts crashed applications, and balances traffic between replicas.
+
+We'll use Docker to package our application and push it to Docker Hub. Then, we'll deploy the web application and the database separately using a microservice architecture.
+We'll also set up environment variables for both the frontend and backend containers. Finally, we'll use Kubernetes to make our application accessible worldwide.
 
 
 Kubernetes provides several distributions to create a cluster. For learning purposes, though, a complete cluster is not required. Instead, you can use any one of the following:
